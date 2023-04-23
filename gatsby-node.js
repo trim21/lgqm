@@ -1,11 +1,11 @@
 const path = require(`path`)
 const execa = require(`execa`)
-const { createFilePath } = require(`gatsby-source-filesystem`)
+const {createFilePath} = require(`gatsby-source-filesystem`)
 
 let lastmodMap = new Map()
 
 try {
-  const { stdout } = execa.sync(`git`, [
+  const {stdout} = execa.sync(`git`, [
     `-c`,
     `diff.renames=0`,
     `-c`,
@@ -34,8 +34,8 @@ try {
 // console.log(lastmodMap)
 console.log(`Finished loading lastmod`)
 
-exports.onCreateNode = ({ node, getNode, actions }) => {
-  const { createNodeField } = actions
+exports.onCreateNode = ({node, getNode, actions}) => {
+  const {createNodeField} = actions
 
   if (node.internal.type === `MarkdownRemark`) {
     const file = getNode(node.parent)
@@ -48,7 +48,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     const type = isList ? `list` : `single`
     const slug = isList
       ? `/${file.relativeDirectory}/`
-      : createFilePath({ node, getNode })
+      : createFilePath({node, getNode})
 
     const time =
       (node.frontmatter.lastmod
@@ -81,52 +81,52 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
   }
 }
 
-exports.createPages = async ({ graphql, actions }) => {
-  const { createPage } = actions
+exports.createPages = async ({graphql, actions}) => {
+  const {createPage} = actions
 
   const listResult = await graphql(`
-    query {
-      allMarkdownRemark(
-        sort: { fields: frontmatter___aid }
-        filter: { fields: { type: { eq: "list" } } }
-      ) {
-        edges {
-          node {
-            fields {
-              slug
-            }
-            frontmatter {
-              aid
-              title
-            }
+      query {
+          allMarkdownRemark(
+              sort: {frontmatter: {aid: ASC}}
+              filter: {fields: {type: {eq: "list"}}}
+          ) {
+              edges {
+                  node {
+                      fields {
+                          slug
+                      }
+                      frontmatter {
+                          aid
+                          title
+                      }
+                  }
+              }
           }
-        }
       }
-    }
   `)
 
   if (listResult.errors) throw listResult.errors
 
-  listResult.data.allMarkdownRemark.edges.forEach(async ({ node }) => {
+  const r = listResult.data.allMarkdownRemark.edges.map(({node}) => async () => {
     const singleResult = await graphql(`
-    query {
-      allMarkdownRemark(
-        sort: { fields: frontmatter___zid }
-        filter: { fields: { type: { eq: "single" } } frontmatter: { aid: {eq: ${node.frontmatter.aid}}} }
-      ) {
-        edges {
-          node {
-            fields {
-              slug
+        query{
+            allMarkdownRemark(
+                sort: {frontmatter: {zid: ASC}}
+                filter: {fields: {type: {eq: "single"}}, frontmatter: {aid: {eq: ${node.frontmatter.aid}}}}
+            ) {
+                edges {
+                    node {
+                        fields {
+                            slug
+                        }
+                        frontmatter {
+                            title
+                        }
+                    }
+                }
             }
-            frontmatter {
-              title
-            }
-          }
         }
-      }
-    }
-  `)
+    `)
 
     if (singleResult.errors) throw singleResult.errors
 
@@ -153,9 +153,9 @@ exports.createPages = async ({ graphql, actions }) => {
         context: {
           title: node.frontmatter.title,
           slug: node.fields.slug,
-          parent: { ...parent.fields, ...parent.frontmatter },
-          prev: prev && { ...prev.fields, ...prev.frontmatter },
-          next: next && { ...next.fields, ...next.frontmatter },
+          parent: {...parent.fields, ...parent.frontmatter},
+          prev: prev && {...prev.fields, ...prev.frontmatter},
+          next: next && {...next.fields, ...next.frontmatter},
         },
       })
     })
@@ -169,4 +169,6 @@ exports.createPages = async ({ graphql, actions }) => {
       },
     })
   })
+
+  await Promise.all(r.map(rr => rr()))
 }

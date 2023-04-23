@@ -99,25 +99,25 @@ const Archive = ({ data }) => {
 export default Archive
 
 export const query = graphql`
-  query {
-    allMarkdownRemark(
-      sort: { fields: [frontmatter___aid, frontmatter___zid] }
-    ) {
-      group(field: frontmatter___aid) {
-        nodes {
-          frontmatter {
-            title
-            aid
-            zid
-            author
-          }
-          fields {
-            type
-            slug
-            lastmod
-          }
+    query {
+        allMarkdownRemark(
+            sort: [{frontmatter: {aid: ASC}}, {frontmatter: {zid: ASC}}]
+        ) {
+            group(field:  {frontmatter: {aid: SELECT}}) {
+                nodes {
+                    frontmatter {
+                        title
+                        aid
+                        zid
+                        author
+                    }
+                    fields {
+                        type
+                        slug
+                        lastmod
+                    }
+                }
+            }
         }
-      }
     }
-  }
 `

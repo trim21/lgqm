@@ -68,7 +68,7 @@ export const query = graphql`
         frontmatter: { aid: { eq: $aid } }
         fields: { type: { eq: "single" } }
       }
-      sort: { fields: frontmatter___zid }
+      sort: {frontmatter: {zid: ASC}}
     ) {
       nodes {
         frontmatter {
