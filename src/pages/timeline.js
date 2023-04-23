@@ -1,20 +1,20 @@
 import React from "react"
-import {graphql, Link} from "gatsby"
+import { graphql, Link } from "gatsby"
 
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 
-import {toHtml as a2h} from "hast-util-to-html"
+import { toHtml as a2h } from "hast-util-to-html"
 
-const Event = ({event}) => (
+const Event = ({ event }) => (
   <tr>
     <td>{event.category}</td>
     <td>{event.title}</td>
-    <td dangerouslySetInnerHTML={{__html: event.html}}></td>
+    <td dangerouslySetInnerHTML={{ __html: event.html }}></td>
   </tr>
 )
 
-const Timeline = ({data}) => {
+const Timeline = ({ data }) => {
   const events = new Array()
 
   let event = {
@@ -43,19 +43,19 @@ const Timeline = ({data}) => {
 
   return (
     <Layout>
-      <SEO title="时间轴"/>
+      <SEO title="时间轴" />
       <table className="table is-fullwidth">
         <thead>
-        <tr>
-          <th>分类</th>
-          <th>标题</th>
-          <th>内容</th>
-        </tr>
+          <tr>
+            <th>分类</th>
+            <th>标题</th>
+            <th>内容</th>
+          </tr>
         </thead>
         <tbody>
-        {events.map(event => (
-          <Event event={event}/>
-        ))}
+          {events.map(event => (
+            <Event event={event} />
+          ))}
         </tbody>
       </table>
     </Layout>
@@ -65,19 +65,19 @@ const Timeline = ({data}) => {
 export default Timeline
 
 export const query = graphql`
-    {
-        allMarkdownRemark(
-            filter: {
-                frontmatter: { type: { eq: "data" }, class: { eq: "timeline" } }
-            }
-        ) {
-            nodes {
-                frontmatter {
-                    title
-                    author
-                }
-                htmlAst
-            }
+  {
+    allMarkdownRemark(
+      filter: {
+        frontmatter: { type: { eq: "data" }, class: { eq: "timeline" } }
+      }
+    ) {
+      nodes {
+        frontmatter {
+          title
+          author
         }
+        htmlAst
+      }
     }
+  }
 `

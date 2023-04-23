@@ -62,13 +62,13 @@ export default ({ data }) => (
 )
 
 export const query = graphql`
-  query($aid: Int!, $slug: String!) {
+  query ($aid: Int!, $slug: String!) {
     allMarkdownRemark(
       filter: {
         frontmatter: { aid: { eq: $aid } }
         fields: { type: { eq: "single" } }
       }
-      sort: {frontmatter: {zid: ASC}}
+      sort: { frontmatter: { zid: ASC } }
     ) {
       nodes {
         frontmatter {

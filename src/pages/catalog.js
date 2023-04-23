@@ -53,29 +53,29 @@ const Catalog = ({ data }) => {
 export default Catalog
 
 export const query = graphql`
-    {
-        lists: allMarkdownRemark(
-            sort:  {frontmatter: {aid: ASC}}
-            filter: { fields: { type: { eq: "list" } } }
-        ) {
-            nodes {
-                frontmatter {
-                    title
-                    aid
-                    author
-                }
-                fields {
-                    type
-                    slug
-                    lastmod
-                }
-            }
+  {
+    lists: allMarkdownRemark(
+      sort: { frontmatter: { aid: ASC } }
+      filter: { fields: { type: { eq: "list" } } }
+    ) {
+      nodes {
+        frontmatter {
+          title
+          aid
+          author
         }
-        singles: allMarkdownRemark {
-            group(field: {frontmatter: {aid: SELECT}}) {
-                fieldValue
-                totalCount
-            }
+        fields {
+          type
+          slug
+          lastmod
         }
+      }
     }
+    singles: allMarkdownRemark {
+      group(field: { frontmatter: { aid: SELECT } }) {
+        fieldValue
+        totalCount
+      }
+    }
+  }
 `
